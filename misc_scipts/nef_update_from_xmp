@@ -1,0 +1,84 @@
+#!/bin/bash
+# SPDX-FileCopyrightText: 2023 Brian Woods
+# SPDX-License-Identifier: GPL-2.0-or-later
+
+# ------------------------------------------------------------------
+# an exiftool rating updater
+#	This tool reads in xmp files from darktable and updates the
+#	orginal NEF file with the xmp file's rating.  This is so when
+#	exporting darktable pictures into lightroom, the rating is
+#	imported into lightroom
+# ------------------------------------------------------------------
+
+VERSION=0.1.0
+USAGE="Usage: `basename "$0"` -bh <NEF file(s)>\n"
+USAGE+="\t-b => backup orginals\n"
+USAGE+="\t-r => remove xmp after updating\n"
+USAGE+="\t-h => help"
+
+
+BACKUP="-overwrite_original"
+REMOVE=false
+
+if [ $# == 0 ] ; then
+	echo -e $USAGE
+	exit 1;
+fi
+
+while getopts ":rbh" optname ; do
+	case "$optname" in
+	"v")
+		echo "Version $VERSION"
+		exit 0;
+		;;
+	"b")
+		BACKUP=
+		;;
+	"r")
+		REMOVE=true
+		;;
+	"h")
+		echo -e $USAGE
+		exit 0;
+		;;
+	"?")
+		echo "Unknown option $OPTARG"
+		exit 0;
+		;;
+	":")
+		echo "No argument value for option $OPTARG"
+		exit 0;
+		;;
+	*)
+		echo "Unknown error while processing options"
+		exit 0;
+		;;
+	esac
+done
+
+shift $(($OPTIND - 1))
+
+for NEFFILE in "$@" ; do
+	if [  ! -f ${NEFFILE} ] ; then
+		echo "${NEFFILE} doesn't exist, skipping"
+		continue;
+	fi
+
+	XMPFILE="${NEFFILE}.xmp"
+	if [  ! -f ${XMPFILE} ] ; then
+		echo "${XMPFILE} doesn't exist, skipping"
+		continue;
+	fi
+
+	exiftool ${BACKUP} -tagsFromFile ${XMPFILE} -Rating ${NEFFILE}
+	RV=$?
+
+	if (($RV > 0)) ; then
+		echo "Updating rating from ${XMPFILE} to ${NEFFILE} failed"
+		continue
+	fi
+
+	if [ "${REMOVE}" = true ] ; then
+		rm ${XMPFILE}
+	fi
+done

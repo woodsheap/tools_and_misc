@@ -1,0 +1,20 @@
+#!/bin/bash
+# SPDX-FileCopyrightText: 2023 Brian Woods
+# SPDX-License-Identifier: GPL-2.0-or-later
+
+if [ "x$1" == "x" ] ; then
+	echo "please input usb driver to search for"
+	exit 1
+else
+	driver=$1
+fi
+
+for ttyUSB in $( ls /dev/ttyUSB* ) ; do
+	id=$( udevadm info -q path -n $ttyUSB )
+	rv=$( udevadm info -a -p "$id" | grep "$driver" )
+	if [ "x$rv" != "x" ] ; then
+		echo "$ttyUSB"
+	fi
+done
+
+exit

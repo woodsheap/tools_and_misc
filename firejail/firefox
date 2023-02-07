@@ -1,0 +1,5 @@
+#!/bin/bash
+# SPDX-FileCopyrightText: 2023 Brian Woods
+# SPDX-License-Identifier: GPL-2.0-or-later
+
+firejail --x11=xpra --profile=/etc/firejail/firefox-esr.profile --private=$HOME/jails/firefox/ --whitelist=/tmp/pulseaudio.sock /usr/bin/firefox-esr

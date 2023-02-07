@@ -1,0 +1,5 @@
+#!/bin/bash
+# SPDX-FileCopyrightText: 2023 Brian Woods
+# SPDX-License-Identifier: GPL-2.0-or-later
+
+SDL_VIDEO_FULLSCREEN_HEAD=1 firejail --noprofile --ignore=seccomp --whitelist=/tmp/pulseaudio.sock --private=$HOME/jails/steam ./steam

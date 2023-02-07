@@ -1,0 +1,10 @@
+#!/bin/bash
+# SPDX-FileCopyrightText: 2023 Brian Woods
+# SPDX-License-Identifier: GPL-2.0-or-later
+
+WIN_IP="10.0.8.60"
+WIN_PORT="18181"
+AUDIO_DEV="alsa_output.usb-Lenovo_ThinkPad_USB-C_Dock_Gen2_USB_Audio_000000000000-00.analog-stereo.monitor"
+
+# works, but mp3
+ffmpeg -f pulse -i "$AUDIO_DEV" -ac 2 -acodec libmp3lame -ar 44100 -ab 256000 -f rtp rtp://$WIN_IP:$WIN_PORT

@@ -1,0 +1,21 @@
+#!/bin/bash
+# SPDX-FileCopyrightText: 2023 Brian Woods
+# SPDX-License-Identifier: GPL-2.0-or-later
+
+# Uses a "NOYITO 2-Channel Micro USB Relay" connected to a PC's power
+# switch to remotely press the button.  This is the short press.
+
+uart=$( find_uart ch341-uart )
+
+# sets correct baud rate
+stty 9600 -F "$uart"
+
+# enable
+echo -en '\xa0\x01\x01\xa2' > "$uart"
+echo -en '\xa0\x02\x01\xa3' > "$uart"
+
+sleep 1
+
+# disable
+echo -en '\xa0\x01\x00\xa1' > "$uart"
+echo -en '\xa0\x02\x00\xa2' > "$uart"
