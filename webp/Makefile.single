@@ -1,0 +1,25 @@
+# SPDX-FileCopyrightText: 2023 Brian Woods
+# SPDX-License-Identifier: GPL-2.0-or-later
+
+SRC_DIR=src
+OUT_DIR=high_quality
+WEBP_OPT=-near_lossless 60
+
+SRC=$(shell find src/ -type f -name '*.png')
+OUT=$(patsubst ${SRC_DIR}/%.png, ${OUT_DIR}/%.webp, $(SRC))
+
+.PHONY: all clean
+.SECONDARY: main-build
+
+all: pre-build main-build
+
+pre-build:
+	( cd ${SRC_DIR};  find ./ -mindepth 1 -type d ) | xargs -I{} mkdir -p "${OUT_DIR}/{}"
+
+main-build: ${OUT}
+
+${OUT_DIR}/%.webp: ${SRC_DIR}/%.png
+	cwebp ${WEBP_OPT} "$<" -o "$@"
+
+clean:
+	rm -rf ${OUT_DIR}

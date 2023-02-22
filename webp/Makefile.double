@@ -1,0 +1,36 @@
+# SPDX-FileCopyrightText: 2023 Brian Woods
+# SPDX-License-Identifier: GPL-2.0-or-later
+
+SRC_DIR=src
+HIGH_OUT_DIR=high_quality
+LOW_OUT_DIR=low_quality
+
+HIGH_WEBP_OPT=-near_lossless 60
+LOW_WEBP_OPT=-af -pass 6  -psnr 38
+
+SRC=$(shell find src/ -type f -name '*.png')
+HIGH_OUT=$(patsubst ${SRC_DIR}/%.png, ${HIGH_OUT_DIR}/%.webp, $(SRC))
+LOW_OUT=$(patsubst ${SRC_DIR}/%.png, ${LOW_OUT_DIR}/%.webp, $(SRC))
+
+.PHONY: all clean high low
+.SECONDARY: main-build-high main-build-low
+
+all: high low
+high: pre-build-high main-build-high
+low: pre-build-low main-build-low
+
+pre-build-high:
+	( cd ${SRC_DIR};  find ./ -mindepth 1 -type d ) | xargs -I{} mkdir -p "${HIGH_OUT_DIR}/{}"
+pre-build-low:
+	( cd ${SRC_DIR};  find ./ -mindepth 1 -type d ) | xargs -I{} mkdir -p "${LOW_OUT_DIR}/{}"
+
+main-build-high: ${HIGH_OUT}
+main-build-low: ${LOW_OUT}
+
+${HIGH_OUT_DIR}/%.webp: ${SRC_DIR}/%.png
+	cwebp ${HIGH_WEBP_OPT} "$<" -o "$@"
+${LOW_OUT_DIR}/%.webp: ${SRC_DIR}/%.png
+	cwebp ${LOW_WEBP_OPT} "$<" -o "$@"
+
+clean:
+	rm -rf ${HIGH_OUT_DIR} ${LOW_OUT_DIR}
