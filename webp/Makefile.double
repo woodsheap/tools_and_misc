@@ -8,8 +8,8 @@ LOW_OUT_DIR=low_quality
 HIGH_WEBP_OPT=-near_lossless 60
 LOW_WEBP_OPT=-af -pass 6  -psnr 38
 
-SRC_PNG=$(shell find src/ -type f -iname '*.png')
-SRC_WEBP=$(shell find src/ -type f -iname '*.webp')
+SRC_PNG=$(shell find ${SRC_DIR}/ -type f -iname '*.png')
+SRC_WEBP=$(shell find ${SRC_DIR}/ -type f -iname '*.webp')
 HIGH_OUT=$(patsubst ${SRC_DIR}/%.png, ${HIGH_OUT_DIR}/%.webp, $(SRC_PNG)) \
          $(patsubst ${SRC_DIR}/%.webp, ${HIGH_OUT_DIR}/%.webp, $(SRC_WEBP))
 LOW_OUT=$(patsubst ${SRC_DIR}/%.png, ${LOW_OUT_DIR}/%.webp, $(SRC_PNG)) \
