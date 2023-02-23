@@ -18,7 +18,7 @@ pre-build:
 
 main-build: ${OUT}
 
-${OUT_DIR}/%.webp: ${SRC_DIR}/%.png
+${OUT_DIR}/%.webp: ${SRC_DIR}/%.png pre-build
 	cwebp ${WEBP_OPT} "$<" -o "$@"
 
 clean:

@@ -30,9 +30,9 @@ pre-build-low:
 main-build-high: ${HIGH_OUT}
 main-build-low: ${LOW_OUT}
 
-${HIGH_OUT_DIR}/%.webp: ${SRC_DIR}/%.*
+${HIGH_OUT_DIR}/%.webp: ${SRC_DIR}/%.* pre-build-high
 	cwebp ${HIGH_WEBP_OPT} "$<" -o "$@"
-${LOW_OUT_DIR}/%.webp: ${SRC_DIR}/%.*
+${LOW_OUT_DIR}/%.webp: ${SRC_DIR}/%.* pre-build-low
 	cwebp ${LOW_WEBP_OPT} "$<" -o "$@"
 
 clean:
